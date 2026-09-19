@@ -78,7 +78,7 @@ npm run preview
 
 https://hiromu2001.github.io/PROJECT-MAGI/
 
-このリポジトリではGitHub Actionsによる自動デプロイを設定済みです。
+このリポジトリではGitHub Pagesを有効化済みで、GitHub Actionsによる自動デプロイを設定しています。
 
 新規リポジトリ作成直後など、GitHub Pages自体がまだ有効になっていない場合だけ、リポジトリの **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に変更してください。
 
