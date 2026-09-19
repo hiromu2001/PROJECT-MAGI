@@ -680,6 +680,34 @@ function resolve(results: CoreResult[]): {
   return { consensus: "UNRESOLVED", unanimous: false };
 }
 
+export async function simulateWithoutPersistence(query: string): Promise<DeliberationRecord> {
+  const provider = new LocalTextPerceptionProvider();
+  const observation = await provider.analyze(query);
+  const stimulus = new NeuralEncoder().encode(observation);
+  const states: Record<CoreId, LearningState> = {
+    MELCHIOR: emptyState(),
+    BALTHASAR: emptyState(),
+    CASPAR: emptyState(),
+  };
+  const querySeed = stableHash(query + "|" + observation.version);
+  const results = profiles.map((profile) =>
+    runCore(stimulus, profile, states[profile.id], querySeed),
+  );
+  const resolution = resolve(results);
+
+  return {
+    id: "simulation",
+    query,
+    createdAt: new Date(0).toISOString(),
+    observation,
+    results,
+    consensus: resolution.consensus,
+    unanimous: resolution.unanimous,
+    dissent: resolution.dissent,
+    provider: observation.provider,
+  };
+}
+
 export async function deliberate(query: string): Promise<DeliberationRecord> {
   const provider = new LocalTextPerceptionProvider();
   const observation = await provider.analyze(query);
