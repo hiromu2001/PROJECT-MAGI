@@ -74,7 +74,17 @@ npm run preview
 
 ## GitHub Pages
 
-`main`へpushするとGitHub ActionsがViteをビルドし、GitHub Pagesへ自動デプロイします。
+公開URL:
+
+https://hiromu2001.github.io/PROJECT-MAGI/
+
+このリポジトリではGitHub Actionsによる自動デプロイを設定済みです。
+
+新規リポジトリ作成直後など、GitHub Pages自体がまだ有効になっていない場合だけ、リポジトリの **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に変更してください。
+
+https://github.com/hiromu2001/PROJECT-MAGI/settings/pages
+
+一度有効化すれば、その後は`main`へのpushでビルドとデプロイが自動実行されます。
 
 ## データ
 
