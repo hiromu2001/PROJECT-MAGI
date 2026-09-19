@@ -10,7 +10,7 @@
 
 GitHub Pages: https://hiromu2001.github.io/PROJECT-MAGI/
 
-入力欄に審議したい内容を書き、**「審議開始」**を押すだけで動きます。現在は外部APIを使わず、ブラウザ内のLocal Perception Providerで入力をCanonical Observationへ変換し、Neural Encoderを経由して3つの独立したFly-Brain-inspired SNNへ送ります。
+入力欄に審議したい内容を書き、**「審議開始」**を押すだけで動きます。現在は外部APIを使わず、ブラウザ内のLocal Perception Providerが文章からコスト、可逆性、不確実性、根拠、時間圧、コミットメント、新規性、下振れ/上振れ範囲、個人/社会への影響などをCanonical Observationとして抽出し、Neural Encoderを経由して3つの独立したFly-Brain-inspired SNNへ送ります。
 
 > 現在のCONNECTOME MODEは **CELL-TYPE / Browser Simulation** です。実FlyWireコネクトームそのものを再現しているわけではありません。
 
@@ -38,7 +38,7 @@ NeuralStimulus
                Consensus Engine
 ```
 
-UIに出る神経活動は、ブラウザ内で実際に走らせた簡易LIFシミュレーションの発火イベントを使っています。結果だけを乱数で決める構成にはしていません。
+UIに出る神経活動は、ブラウザ内で実際に走らせた簡易LIFシミュレーションの発火イベントを使っています。最終的な承認/否決をPerception側の固定if文で決めるのではなく、Canonical Observationが神経刺激になり、各Core固有のMBON感度と学習済み重みを通った結果として判断が出ます。
 
 ## JEVを後から接続する方針
 
@@ -99,3 +99,14 @@ https://github.com/hiromu2001/PROJECT-MAGI/settings/pages
 - 公式作品の画像・ロゴ・音声・フォント等は使用せず、独自の工業端末 / 生体計算機風UIとして作る
 
 詳細は [SPEC.md](./SPEC.md) を参照してください。
+
+
+## 回答品質について
+
+Local Providerは単なる文字数・semantic hash中心の方式から、意味特徴ベースの解析へ変更しています。例えば同じ「研究に20万円使うべきか？」でも、自己資金・根拠不足・高い不可逆性があるケースと、会社支給・返済不要・検証済み・中止可能なケースでは異なるCanonical Observationを生成します。
+
+自動テストでは、意味特徴の差だけでなく、条件が改善した場合にBALTHASARを含むNeural CoreのMBON marginが実際に変化することも確認しています。
+
+```bash
+npm test
+```
