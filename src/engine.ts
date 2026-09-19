@@ -312,7 +312,7 @@ function runCore(
       }
       const noise = (rng() - 0.5) * profile.noise;
       v[k] = v[k] * 0.84 + current * pulse + noise;
-      const threshold = 0.72 + profile.thresholdBias + (k % 7) * 0.012;
+      const threshold = 0.58 + profile.thresholdBias + (k % 7) * 0.01;
       if (v[k] >= threshold) {
         active += 1;
         spikeCounts[k] += 1;
@@ -351,7 +351,7 @@ function runCore(
   const stability = clamp(1 - Math.sqrt(variance) * 3.2);
 
   let decision: Decision;
-  if (activity < 0.025 || Math.abs(margin) < 0.016 || stability < 0.18) {
+  if (activity < 0.015 || Math.abs(margin) < 0.008 || stability < 0.15) {
     decision = "ABSTAIN";
   } else {
     decision = margin >= 0 ? "APPROVE" : "REJECT";
