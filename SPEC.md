@@ -40,15 +40,30 @@ PerceptionとNeural Encodingを分離する。JEV導入時にSNN入力次元やM
 
 現行Providerは`LocalTextPerceptionProvider`。
 
-文章から、文字量・数値密度・不確実性表現・新規性表現・根拠表現・可逆性表現・資源表現・時間表現・コミットメント表現、および決定論的なsemantic hashを生成する。
+文章から以下のCanonical Observationを生成する。
 
-これは高精度な意味理解ではない。最終判断をLocal Provider側で決めない。
+- COST MAGNITUDE
+- REVERSIBILITY
+- UNCERTAINTY
+- EVIDENCE STRENGTH
+- TIME PRESSURE
+- COMMITMENT LEVEL
+- NOVELTY
+- DOWNSIDE SCOPE
+- UPSIDE SCOPE
+- PERSONAL IMPACT
+- SOCIAL IMPACT
+- INFORMATION COMPLETENESS
+
+金額は文脈上の支出・貯金・予算との比率を考慮し、返済不要・会社負担・補助・試験運用などの保護条件も反映する。転職、投資、購入、研究、導入、恋愛、旅行などのaction typeもmetadataとして抽出する。
+
+Perception Providerは最終のAPPROVE / REJECTを決定しない。価値判断はNeural Encoderより下のMAGI Coreで行う。
 
 JEV接続時は`JevPerceptionProvider`を追加し、同じ`CanonicalObservation`を返す。
 
 ## 4. Neural Encoder
 
-`CanonicalObservation`から固定24次元の`NeuralStimulus`を生成する。
+`CanonicalObservation`の12意味特徴と、そのcomplement channelを合わせて固定24次元の`NeuralStimulus`を生成する。高コストだけでなく低コスト、高不確実性だけでなく低不確実性も独立した神経刺激として表現する。
 
 Providerの変更をこの境界で吸収する。
 
@@ -68,7 +83,7 @@ positive / negative MBON-like readout
 Decision
 ```
 
-Neuronは簡易Leaky Integrate-and-Fireとして扱う。72個のKC-like nodeを使い、実発火数をUIへ表示する。
+Neuronは簡易Leaky Integrate-and-Fireとして扱う。96個のKC-like nodeを使い、実発火数をUIへ表示する。
 
 実FlyWire connectomeそのものではない。
 
@@ -94,6 +109,8 @@ Neuronは簡易Leaky Integrate-and-Fireとして扱う。72個のKC-like nodeを
 - exploration noiseを増やす
 
 3 Coreは共通base topologyを持ち、modulation parameterと学習状態を分ける。
+
+各KC-like nodeは意味特徴のraw / complement channelへ疎に接続される。MBON-like readoutでは、同じ特徴でもCoreごとにpositive / negative sensitivityが異なる。例えばBALTHASARは高コスト・高不確実性・大きなdownsideへのnegative sensitivityが高く、CASPARはnovelty・upside・reversibilityへのpositive sensitivityが高い。
 
 ## 7. Decision
 
@@ -185,3 +202,17 @@ JEV導入によってMAGI Engine、Consensus、UIの大幅改修が必要にな�
 - Local ProviderとNeural Encoderが分離されている
 - JEV Provider stubが存在する
 - モバイルで最低限操作できる
+
+
+## 14. Semantic Regression Test
+
+以下をCIで自動確認する。
+
+- 自己資金を大きく使い、根拠がなく、生活への下振れが大きい質問
+- 会社支給・返済不要・検証済み・中止可能な質問
+
+後者では前者より、COST / UNCERTAINTY / DOWNSIDEが低く、EVIDENCE / REVERSIBILITYが高くなること。
+
+さらに、BALTHASARのMBON marginが安全側の条件で改善し、少なくとも2 Coreのmarginが同方向へ変化することを確認する。
+
+`npm test`で実行する。
