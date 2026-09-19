@@ -214,8 +214,8 @@ export class LocalTextPerceptionProvider implements PerceptionProvider {
     const moneyHits = extractMoney(text);
 
     const uncertaintyTerms = ["かも", "不明", "未定", "迷", "わから", "分から", "不確", "未知", "自信がない", "情報がない", "よく知らない"];
-    const noEvidenceTerms = ["根拠がない", "データがない", "実績がない", "検証していない", "よくわからない", "情報不足"];
-    const evidenceTerms = ["データ", "根拠", "実績", "検証済", "検証した", "比較した", "証拠", "結果が出", "試算", "確認済"];
+    const noEvidenceTerms = ["根拠がない", "根拠もない", "根拠もなく", "根拠なし", "データがない", "データもない", "データもなく", "データなし", "実績がない", "実績なし", "検証していない", "よくわからない", "情報不足"];
+    const evidenceTerms = ["データ", "根拠", "実績", "検証済", "検証した", "検証データ", "比較した", "証拠", "結果が出", "試算", "確認済"];
     const strongEvidenceTerms = ["統計", "再現", "複数回", "実証", "第三者", "ベンチマーク"];
     const reversibleTerms = ["戻せ", "中止でき", "撤回でき", "試験", "お試し", "一時", "段階的", "小さく始め", "やめられ", "返金"];
     const irreversibleTerms = ["戻せない", "撤回できない", "取り返し", "退職", "解約不可", "返金不可", "本番一括", "全額"];
@@ -260,11 +260,18 @@ export class LocalTextPerceptionProvider implements PerceptionProvider {
       countTerms(text, strongEvidenceTerms) * 0.06,
     );
 
+    const negatedEvidenceMatches =
+      text.match(/(?:根拠|データ|実績|証拠)[^。！？]{0,12}(?:ない|なく|なし|不明)/g)?.length ?? 0;
+    const positiveEvidenceCount = Math.max(
+      0,
+      countTerms(text, evidenceTerms) - negatedEvidenceMatches * 2,
+    );
     const evidenceStrength = clamp(
       0.28 +
-      countTerms(text, evidenceTerms) * 0.12 +
+      positiveEvidenceCount * 0.12 +
       countTerms(text, strongEvidenceTerms) * 0.18 -
-      countTerms(text, noEvidenceTerms) * 0.2,
+      countTerms(text, noEvidenceTerms) * 0.2 -
+      negatedEvidenceMatches * 0.18,
     );
 
     const timePressure = clamp(
