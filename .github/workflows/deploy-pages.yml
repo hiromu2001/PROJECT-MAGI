@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Test semantic and neural behavior
+        run: npm test
+
       - name: Build
         run: npm run build
 
