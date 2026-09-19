@@ -111,7 +111,7 @@ function NeuralGrid({ record }: { record: DeliberationRecord }) {
         ))}
       </div>
       <div className="neural-footer">
-        <span>KC-LIKE POPULATION // 72 NODES</span>
+        <span>KC-LIKE POPULATION // 96 NODES</span>
         <span>CONNECTOME MODE // CELL-TYPE</span>
       </div>
     </div>
@@ -123,7 +123,7 @@ function ObservationPanel({ record }: { record: DeliberationRecord }) {
     <div className="observation-box">
       <div className="section-head">
         <span>CANONICAL OBSERVATION</span>
-        <small>{record.observation.version}</small>
+        <small>{record.observation.meta.actionType} // {record.observation.version}</small>
       </div>
       <div className="observation-list">
         {record.observation.labels.map((label, i) => (
@@ -243,6 +243,7 @@ export default function App() {
     const lines = [
       "EVT // QUERY RECEIVED",
       `EVT // ${record.observation.version.toUpperCase()} OBSERVATION GENERATED`,
+      `EVT // ACTION TYPE ${record.observation.meta.actionType}`,
       "EVT // NEURAL STIMULUS BROADCAST",
       ...record.results.map((r) => `EVT // ${r.core} ${r.decision} // STRENGTH ${r.decisionStrength.toFixed(1)}`),
     ];
